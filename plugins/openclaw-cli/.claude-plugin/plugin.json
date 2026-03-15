@@ -1,0 +1,10 @@
+{
+  "name": "openclaw-cli",
+  "version": "1.0.0",
+  "description": "OpenClaw CLI reference for managing Talia's gateway, config, cron, and security on the Raspberry Pi",
+  "author": {
+    "name": "Matthew Wagner",
+    "email": "wagnermatt@icloud.com"
+  },
+  "keywords": ["openclaw", "talia", "gateway", "cron", "agents", "raspberry-pi"]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "obsidian-homelab",
+  "version": "1.0.0",
+  "description": "Obsidian vault intelligence, homelab operations, and daily workflows for personal knowledge management and infrastructure.",
+  "author": {
+    "name": "Matthew Wagner",
+    "email": "wagnermatt@icloud.com"
+  },
+  "keywords": ["obsidian", "homelab", "vault", "markdown", "pihole", "talia", "docker", "forgejo"]
+}

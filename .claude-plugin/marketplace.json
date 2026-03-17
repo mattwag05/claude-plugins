@@ -36,7 +36,7 @@
     {
       "name": "openclaw-cli",
       "source": "./plugins/openclaw-cli",
-      "description": "OpenClaw CLI reference for managing Talia's gateway (deprecated — OpenClaw disabled 2026-03-13, replaced by GrimClaw)",
+      "description": "OpenClaw CLI reference for managing Talia's gateway on Raspberry Pi — config, gateway, cron, and security commands",
       "version": "1.0.0"
     },
     {
@@ -49,6 +49,24 @@
       "name": "swift-concurrency",
       "source": "./plugins/swift-concurrency",
       "description": "Swift 6.2 concurrency patterns, proactive code review, and migration planning for modern Swift async/await, actors, and Sendable",
+      "version": "1.0.0"
+    },
+    {
+      "name": "calendar-organizer",
+      "source": "./plugins/calendar-organizer",
+      "description": "Extract, clean, and organize calendar schedules from messy sources into structured calendar data",
+      "version": "1.0.0"
+    },
+    {
+      "name": "talia-connector",
+      "source": "./plugins/talia-connector",
+      "description": "MCP bridge to Talia (personal AI assistant) via OpenClaw on Raspberry Pi — provides ask, status, memory search, sessions, cron, and messaging tools",
+      "version": "1.0.0"
+    },
+    {
+      "name": "remote-tasks",
+      "source": "./plugins/remote-tasks",
+      "description": "Async cross-machine task delegation via SSH and Beads — delegate work to Raspberry Pi and Pironman workers over Tailscale",
       "version": "1.0.0"
     }
   ]

@@ -1,0 +1,7 @@
+{
+  "name": "talia-connector",
+  "version": "1.0.0",
+  "description": "MCP bridge to Talia (personal AI assistant) via OpenClaw on Raspberry Pi — provides ask, status, memory search, sessions, cron, and messaging tools",
+  "author": { "name": "Matthew Wagner" },
+  "keywords": ["talia", "openclaw", "mcp", "raspberry-pi", "telegram"]
+}

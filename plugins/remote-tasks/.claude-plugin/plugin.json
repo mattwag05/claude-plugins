@@ -1,0 +1,7 @@
+{
+  "name": "remote-tasks",
+  "version": "1.0.0",
+  "description": "Async cross-machine task delegation via SSH and Beads — delegate work to Raspberry Pi and Pironman workers over Tailscale",
+  "author": { "name": "Matthew Wagner" },
+  "keywords": ["remote", "delegation", "ssh", "tailscale", "beads", "workers"]
+}

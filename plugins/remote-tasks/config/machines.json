@@ -1,0 +1,41 @@
+{
+  "machines": {
+    "pi": {
+      "ip": "100.120.127.35",
+      "hostname": "raspberrypi",
+      "name": "Raspberry Pi",
+      "hasWorker": true,
+      "capabilities": ["task-worker"]
+    },
+    "pironman": {
+      "ip": "100.75.2.44",
+      "hostname": "pironman",
+      "name": "Pironman",
+      "hasWorker": true,
+      "capabilities": ["task-worker", "ntfy-server"]
+    },
+    "air": {
+      "ip": "100.85.213.42",
+      "hostname": "matthews-macbook-air",
+      "name": "MacBook Air",
+      "hasWorker": false,
+      "capabilities": []
+    }
+  },
+  "ntfy": {
+    "server": "http://100.75.2.44:8091",
+    "topic": "claude-tasks"
+  },
+  "beads": {
+    "remote": "git@github.com:mattwag05/beads-registry.git",
+    "assignees": ["pi", "pironman", "air"]
+  },
+  "worker": {
+    "memory_threshold_percent": 80,
+    "task_timeout": 300,
+    "stale_process_age": 1800,
+    "poll_interval": 30,
+    "max_task_retries": 2,
+    "result_retention_days": 30
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "talia-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Talia (OpenClaw personal assistant) via SSH",
+  "type": "module",
+  "main": "talia-mcp.js",
+  "bin": {
+    "talia-mcp": "./talia-mcp.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.27.1"
+  }
+}

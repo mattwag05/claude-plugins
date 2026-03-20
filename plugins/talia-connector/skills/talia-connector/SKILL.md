@@ -1,11 +1,11 @@
 ---
 name: talia-connector
-description: Use when interacting with Talia (personal AI assistant on OpenClaw/Raspberry Pi). Triggers on talia_ask, talia_status, talia_memory_search, talia_sessions, talia_cron_list, talia_cron_run, talia_message_send, "ask Talia", "check Talia", "Talia's memory", "send Telegram", or any operation against the Talia MCP server.
+description: Use when interacting with Talia (personal AI assistant on OpenClaw/Lume macOS VM). Triggers on talia_ask, talia_status, talia_memory_search, talia_sessions, talia_cron_list, talia_cron_run, talia_message_send, "ask Talia", "check Talia", "Talia's memory", "send Telegram", or any operation against the Talia MCP server.
 ---
 
 # Talia Connector
 
-MCP bridge to Talia — personal AI assistant running on OpenClaw gateway on Raspberry Pi. Provides 7 tools and 2 resources.
+MCP bridge to Talia — personal AI assistant running on OpenClaw gateway in a Lume macOS VM. Provides 7 tools and 2 resources.
 
 ## Tools
 
@@ -80,12 +80,12 @@ talia_message_send(message, target)
 
 ## Prerequisites
 
-The MCP server runs in **stdio mode** on the Mac — it SSHes to `raspberrypi` to run openclaw commands.
+The MCP server runs in **stdio mode** on the Mac — it SSHes to `lumes-virtual-machine` to run openclaw commands.
 
 **Requirements:**
-- `ssh raspberrypi` must work without password (key-based auth via Tailscale)
-- `openclaw` must be in `~/.npm-global/bin/` on the Pi
-- OpenClaw gateway must be running on Pi (`openclaw status` to verify)
+- `ssh lumes-virtual-machine` must work without password (key-based auth via Tailscale)
+- `openclaw` must be in `~/.npm-global/bin/` in the VM
+- OpenClaw gateway must be running in the VM (`openclaw status` to verify)
 - Node.js must be available locally (`node talia-mcp.js` is the server command)
 
 **MCP registration** (in `~/.claude.json`):
@@ -103,8 +103,8 @@ The MCP server runs in **stdio mode** on the Mac — it SSHes to `raspberrypi` t
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `Error: ssh: connect to host raspberrypi` | Tailscale down or Pi offline | `tailscale status`, check Pi |
-| `Timed out after 30000ms` | openclaw slow or unresponsive | `ssh raspberrypi "openclaw status"` |
+| `Error: ssh: connect to host lumes-virtual-machine` | Tailscale down or VM offline | `tailscale status`, check VM with `lume get talia` |
+| `Timed out after 30000ms` | openclaw slow or unresponsive | `ssh lumes-virtual-machine "openclaw status"` |
 | `NO_COLOR` / ANSI in output | Strip failure | Restart MCP server, check NO_COLOR injection |
 | Port 3847 in use | Stale SSE process | `lsof -ti:3847 | xargs kill -9` |
 | `zod` resolve error | Missing dep | `cd mcp && npm install` |

@@ -16,7 +16,7 @@ const execFileAsync = promisify(execFile);
 
 const TRANSPORT = process.env.TRANSPORT || "stdio"; // "stdio" or "sse"
 const PORT = parseInt(process.env.PORT || "3847", 10);
-const SSH_HOST = process.env.SSH_HOST || "raspberrypi";
+const SSH_HOST = process.env.SSH_HOST || "lumes-virtual-machine";
 const OPENCLAW_BIN = process.env.OPENCLAW_BIN || "openclaw";
 const DEFAULT_TIMEOUT_MS = 30_000;
 
@@ -35,7 +35,7 @@ async function runOpenClaw(args, { timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
     let stdout, stderr;
 
     if (LOCAL_MODE) {
-      // Running on the Pi directly (Docker with network_mode: host)
+      // Running locally inside the VM (local to VM)
       // OPENCLAW_BIN may be a .mjs script — run via node
       const bin = OPENCLAW_BIN;
       const isScript = bin.endsWith(".mjs") || bin.endsWith(".js");
@@ -47,7 +47,7 @@ async function runOpenClaw(args, { timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
         { timeout: timeoutMs, maxBuffer: 10 * 1024 * 1024, env: { ...process.env, HOME: "/root", NO_COLOR: "1" } }
       ));
     } else {
-      // SSH to the Pi from the Mac
+      // SSH to the VM from the Mac
       const command = `NO_COLOR=1 PATH=$HOME/.npm-global/bin:$PATH ${OPENCLAW_BIN} ${args.map(a => shellEscape(a)).join(" ")}`;
       ({ stdout, stderr } = await execFileAsync(
         "ssh",
@@ -173,7 +173,7 @@ server.tool(
 
 server.tool(
   "talia_status",
-  "Check OpenClaw gateway status, channel health, and active sessions on the Raspberry Pi.",
+  "Check OpenClaw gateway status, channel health, and active sessions on the Lume macOS VM.",
   {},
   async () => {
     const result = await runOpenClaw(["status", "--no-color"], { timeoutMs: 15_000 });

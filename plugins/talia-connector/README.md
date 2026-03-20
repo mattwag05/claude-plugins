@@ -1,19 +1,19 @@
 # talia-connector
 
-MCP bridge to Talia (personal AI assistant) via OpenClaw on Raspberry Pi.
+MCP bridge to Talia (personal AI assistant) via OpenClaw on Lume macOS VM.
 
 ## What It Does
 
-Exposes 7 tools and 2 resources for interacting with Talia — the personal AI assistant running on OpenClaw gateway on a Raspberry Pi. The MCP server runs locally (stdio transport) and SSHes to the Pi to execute `openclaw` commands.
+Exposes 7 tools and 2 resources for interacting with Talia — the personal AI assistant running on OpenClaw gateway in a Lume macOS VM. The MCP server runs locally (stdio transport) and SSHes to the VM to execute `openclaw` commands.
 
 ## Setup
 
 ### 1. Prerequisites
 
 - Tailscale VPN connected (`tailscale status`)
-- SSH access to Pi: `ssh raspberrypi "openclaw status"` must succeed
+- SSH access to VM: `ssh lumes-virtual-machine "openclaw status"` must succeed
 - Node.js installed locally
-- OpenClaw running on Pi
+- OpenClaw running in the Lume macOS VM
 
 ### 2. Install dependencies
 
@@ -58,14 +58,14 @@ Replace `/path/to/talia-connector` with the actual plugin install path.
 |----------|---------|-------------|
 | `TRANSPORT` | `stdio` | `stdio` or `sse` |
 | `PORT` | `3847` | SSE server port |
-| `SSH_HOST` | `raspberrypi` | SSH target (stdio mode) |
-| `LOCAL_MODE` | `false` | `true` = run openclaw directly (Pi Docker) |
+| `SSH_HOST` | `lumes-virtual-machine` | SSH target (stdio mode) |
+| `LOCAL_MODE` | `false` | `true` = run openclaw directly (local to VM) |
 | `OPENCLAW_BIN` | `openclaw` | Path to openclaw binary |
 
 ## Architecture
 
 ```
-Claude Code (Mac) → stdio → talia-mcp.js → SSH → Pi:openclaw → OpenClaw Gateway → Talia
+Claude Code (Mac) → stdio → talia-mcp.js → SSH → VM:openclaw → OpenClaw Gateway → Talia
 ```
 
-For Docker deployment on Pi (Streamable HTTP mode), see `Talia-Connector` repo on Forgejo.
+For Streamable HTTP mode, see `Talia-Connector` repo on Forgejo.

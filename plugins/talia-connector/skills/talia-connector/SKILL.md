@@ -5,6 +5,8 @@ description: Use when interacting with Talia (personal AI assistant on OpenClaw/
 
 # Talia Connector
 
+> **ARCHIVED — Lume macOS VM decommissioned 2026-03-23.** This plugin is disabled. Talia/OpenClaw is being reinstalled on Pironman (Docker or native systemd). Until that is live, use `ssh raspberrypi "openclaw ..."` via the openclaw-cli skill for Pi-based OpenClaw commands, or interact with Talia directly via Telegram. Do not attempt to use talia_ask or other MCP tools — the SSH target `lumes-virtual-machine` no longer exists.
+
 MCP bridge to Talia — personal AI assistant running on OpenClaw gateway in a Lume macOS VM. Provides 7 tools and 2 resources.
 
 ## Tools

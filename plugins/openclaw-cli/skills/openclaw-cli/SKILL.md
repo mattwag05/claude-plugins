@@ -1,20 +1,20 @@
 ---
 description: >
-  OpenClaw CLI usage patterns for managing Talia (personal AI assistant) on the
-  Raspberry Pi. Activate when user mentions openclaw CLI, openclaw config, openclaw
+  OpenClaw CLI usage patterns for managing Talia (personal AI assistant) on
+  Pironman. Activate when user mentions openclaw CLI, openclaw config, openclaw
   gateway, openclaw cron, openclaw security, or managing Talia's infrastructure.
-  Also activate when SSH-ing to Pi to run openclaw commands.
+  Also activate when SSH-ing to Pironman to run openclaw commands.
 ---
 
 # OpenClaw CLI Reference
 
-Talia runs on the Raspberry Pi (`100.120.127.35`) via the OpenClaw framework.
+Talia runs on **Pironman** (`100.75.2.44`) via the OpenClaw framework.
 All CLI commands must be run with the correct PATH.
 
 ## SSH Prefix (required for all openclaw commands)
 
 ```bash
-ssh 100.120.127.35 "export PATH=\$HOME/.npm-global/bin:\$PATH NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache OPENCLAW_NO_RESPAWN=1 && openclaw <subcommand>"
+ssh pironman "export PATH=\$HOME/.npm-global/bin:\$PATH NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache OPENCLAW_NO_RESPAWN=1 && openclaw <subcommand>"
 ```
 
 The env vars (`NODE_COMPILE_CACHE`, `OPENCLAW_NO_RESPAWN`) reduce startup time on the Pi.
@@ -138,10 +138,11 @@ Script: `~/.local/bin/talia-backup.sh` (run by `talia-backup.service` at 23:59 d
 
 ```bash
 # Manual backup
-ssh 100.120.127.35 "~/.local/bin/talia-backup.sh"
+ssh pironman "~/.local/bin/talia-backup.sh"
 
-# Check backup service
-ssh 100.120.127.35 "systemctl --user status talia-backup.service"
+# Check backup timer
+ssh pironman "systemctl --user status talia-backup.timer"
+ssh pironman "systemctl --user list-timers talia-backup.timer"
 
 # Verify on Forgejo
 curl -s "https://forgejo.tail6e035b.ts.net/api/v1/repos/matthewwagner/talia-workspace/commits?limit=3" \
@@ -156,7 +157,7 @@ for c in json.load(sys.stdin):
 ```bash
 # Edit files locally, then:
 scp local-file.md raspberrypi:~/.openclaw/workspace/
-ssh 100.120.127.35 "cd ~/.openclaw/workspace && git add -A && git commit -m 'Training: description'"
+ssh pironman "cd ~/.openclaw/workspace && git add -A && git commit -m 'Training: description'"
 ```
 
 ---
@@ -165,16 +166,16 @@ ssh 100.120.127.35 "cd ~/.openclaw/workspace && git add -A && git commit -m 'Tra
 
 ```bash
 # Gateway not responding
-ssh 100.120.127.35 "systemctl --user restart openclaw-gateway.service"
-ssh 100.120.127.35 "journalctl --user -u openclaw-gateway.service -n 50 --no-pager"
+ssh pironman "systemctl --user restart openclaw-gateway.service"
+ssh pironman "journalctl --user -u openclaw-gateway.service -n 50 --no-pager"
 
 # Check Talia's recent session behavior
-ssh 100.120.127.35 "ls -lt ~/.openclaw/agents/main/sessions/*.jsonl | head -3"
+ssh pironman "ls -lt ~/.openclaw/agents/main/sessions/*.jsonl | head -3"
 
 # Reset Talia's session (reduces context from ~63k to ~14k tokens)
 # Send /reset via Telegram
 
 # OpenClaw update
-ssh 100.120.127.35 "export PATH=\$HOME/.npm-global/bin:\$PATH && npm install -g openclaw"
+ssh pironman "export PATH=\$HOME/.npm-global/bin:\$PATH && npm install -g openclaw"
 # After update: re-check gateway unit file (ExecStart path may change between index.js/entry.js)
 ```

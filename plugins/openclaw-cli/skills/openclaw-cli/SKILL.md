@@ -8,6 +8,19 @@ description: >
 
 # OpenClaw CLI Reference
 
+## ENFORCEMENT RULE
+
+**Always use the OpenClaw CLI for all configuration changes. Never directly edit OpenClaw JSON files.**
+
+Direct edits to `openclaw.json`, `auth-profiles.json`, `models.json`, or any other file under `~/.openclaw/` are forbidden. They bypass schema validation, break config persistence, and can corrupt runtime state. The CLI is the only supported path.
+
+- `openclaw config set` for `openclaw.json` values
+- `openclaw configure --section model` (via `ssh -t`) for inference provider credentials
+- `openclaw secrets configure` for secret management
+- `openclaw doctor --fix` to repair known issues
+
+If a CLI command fails, investigate and fix the CLI invocation — do not fall back to direct file edits.
+
 Talia runs on **Pironman** (`100.75.2.44`) via the OpenClaw framework.
 All CLI commands must be run with the correct PATH.
 
@@ -68,17 +81,27 @@ openclaw config validate                     # Validate config schema
 
 Config file: `~/.openclaw/openclaw.json` (chmod 600, contains Telegram bot token)
 
-**Edit via python3** (not jq — avoids formatting issues):
+**Do NOT directly edit `openclaw.json` or any other file under `~/.openclaw/`.** All changes must go through the CLI.
+
+---
+
+## API Keys & Inference Credentials
+
+Inference provider API keys (e.g. OpenRouter) are stored in per-agent credential files, NOT in `openclaw.json`. The only supported way to set or rotate them is via the interactive configure wizard, which requires a TTY — use `ssh -t`:
+
 ```bash
-python3 -c "
-import json
-with open('/home/matthewwagner/.openclaw/openclaw.json') as f:
-    d = json.load(f)
-# make changes to d
-with open('/home/matthewwagner/.openclaw/openclaw.json', 'w') as f:
-    json.dump(d, f, indent=2)
-"
+# Interactive wizard — set or rotate OpenRouter (or other provider) API key
+ssh -t pironman "export PATH=\$HOME/.npm-global/bin:\$PATH NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache OPENCLAW_NO_RESPAWN=1 && openclaw configure --section model"
 ```
+
+After updating credentials, validate and restart:
+
+```bash
+ssh pironman "export PATH=\$HOME/.npm-global/bin:\$PATH OPENCLAW_NO_RESPAWN=1 && openclaw config validate && openclaw secrets audit"
+ssh pironman "systemctl --user restart openclaw-gateway.service && systemctl --user is-active openclaw-gateway.service"
+```
+
+**Why `ssh -t`:** The configure wizard is interactive (prompts + selection menus). Without a pseudo-TTY (`-t`), the process exits immediately. The `-t` flag allocates one for the SSH session.
 
 ---
 

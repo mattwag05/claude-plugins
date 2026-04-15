@@ -51,6 +51,35 @@ ssh pironman "cd ~/homelab/docker/compose/gluetun && docker compose stop && dock
 # then restart dependent containers in same fashion
 ```
 
+Dockhand handles this atomically if the `media-stack` Compose Stack is adopted (see below) — prefer the Dockhand path once adoption is in place.
+
+---
+
+## Dockhand — Container Update Manager
+
+Web UI: `https://dockhand.tail6e035b.ts.net`. Image: `fnsys/dockhand:latest`. Compose: `~/homelab/docker/compose/dockhand/docker-compose.yml`.
+
+**Auto-update model:** one cron (`env_update_check`, daily 04:00 ET) runs scan → CVE-gate → apply in a single pass. Dockhand pulls to a `:<tag>-dockhand-pending` staging tag, scans with **Grype and Trivy**, and deploys only if the new image passes the env's `vulnerabilityCriteria`. Pironman's gate is set to `critical_high` — Critical or High CVEs block the update.
+
+**Inspect the live env config (authoritative):**
+```bash
+ssh pironman 'docker exec dockhand sqlite3 /app/data/db/dockhand.db "SELECT value FROM settings WHERE key = '\''env_1_update_check'\'';"'
+# expect: {"enabled":true,"cron":"0 4 * * *","autoUpdate":true,"vulnerabilityCriteria":"critical_high"}
+```
+
+**Trigger a manual run:** Dockhand UI → Schedules → "Update environment: Pironman" → play icon. No-op run ~10s, real run 30s–7m.
+
+**CLI fallback** (Dockhand down, emergency patch):
+```bash
+ssh pironman "cd ~/homelab/docker/compose/<stack> && docker compose pull && docker compose up -d"
+```
+
+**"Never block" Save trap:** The env Updates UI shows `"Critical or high"` as a default but the DB stores `"never"` until an explicit **Save** on the Updates tab. Verify with the SQLite query above after any UI edit — it's the only source of truth.
+
+**Adoption** (making Dockhand own a compose file for atomic stack updates) requires `~/homelab/docker/compose` to be bind-mounted at the same path inside the Dockhand container — already configured. Workflow and schema details: [`references/dockhand.md`](references/dockhand.md).
+
+`caddy-tailscale` lives outside the compose tree (`~/caddy-homelab/pironman/`) so it can't be adopted as a stack, but it's still auto-updated at the container level via `docker ps` visibility.
+
 ---
 
 ## Pi-hole DNS
@@ -172,7 +201,7 @@ tailscale ping pironman
 
 ## Reference Files
 
-- `references/` — extended homelab documentation
+- [`references/dockhand.md`](references/dockhand.md) — Dockhand auto-update pipeline, SQLite schema, adoption workflow, and the "Never block" Save trap
 - `~/.claude/references/docker-homelab.md` — full deployed services table
 - `~/.claude/references/service-gotchas.md` — per-service config issues
 - `~/.claude/references/openclaw.md` — OpenClaw/Talia config

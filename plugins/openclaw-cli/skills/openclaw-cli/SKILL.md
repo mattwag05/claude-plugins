@@ -16,12 +16,16 @@ Direct edits to `openclaw.json`, `auth-profiles.json`, `models.json`, or any oth
 
 If a CLI command fails, investigate and fix the CLI invocation — do not fall back to direct file edits.
 
-Talia runs on **Pironman** (`100.75.2.44`) via the OpenClaw framework.
+Talia runs on **Raspberry Pi** (`100.120.127.35`) via the OpenClaw framework. Gus runs independently on **Pironman** (`100.75.2.44`).
 All CLI commands must be run with the correct PATH.
 
 ## SSH Prefix (required for all openclaw commands)
 
 ```bash
+# For Talia (Raspberry Pi):
+ssh raspberrypi "export PATH=\$HOME/.npm-global/bin:\$PATH NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache OPENCLAW_NO_RESPAWN=1 && openclaw <subcommand>"
+
+# For Gus (Pironman):
 ssh pironman "export PATH=\$HOME/.npm-global/bin:\$PATH NODE_COMPILE_CACHE=/var/tmp/openclaw-compile-cache OPENCLAW_NO_RESPAWN=1 && openclaw <subcommand>"
 ```
 

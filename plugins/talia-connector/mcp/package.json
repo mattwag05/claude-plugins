@@ -1,7 +1,7 @@
 {
   "name": "talia-mcp",
-  "version": "1.0.0",
-  "description": "MCP server for Talia (OpenClaw personal assistant) via SSH",
+  "version": "2.0.0",
+  "description": "MCP server for Talia (Hermes-Agent personal assistant) via local API + CLI shim",
   "type": "module",
   "main": "talia-mcp.js",
   "bin": {

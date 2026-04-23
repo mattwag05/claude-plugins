@@ -1,7 +1,7 @@
 {
   "name": "talia-connector",
-  "version": "1.0.0",
-  "description": "MCP bridge to Talia (personal AI assistant) via OpenClaw on Lume macOS VM — provides ask, status, memory search, sessions, cron, and messaging tools",
+  "version": "2.0.0",
+  "description": "MCP bridge to Talia (personal AI assistant) via local Hermes-Agent on the M5 — provides ask (API), memory search, sessions, status, and cron tools",
   "author": { "name": "Matthew Wagner" },
-  "keywords": ["talia", "openclaw", "mcp", "lume-vm", "telegram"]
+  "keywords": ["talia", "hermes-agent", "hermes", "mcp", "telegram"]
 }

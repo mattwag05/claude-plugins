@@ -1,6 +1,6 @@
 ---
 name: apple-container
-description: Use when running, building, or managing Linux containers with Apple's `container` CLI on macOS (Apple silicon), or when migrating a Docker / Docker Desktop workflow to Apple Container. Triggers include "apple container", "the container CLI", "container run/build", "replace Docker Desktop on mac", "docker to apple container", or running containers on Apple silicon without Docker. Covers setup, the Docker→container command mapping, and the behavioral differences (no daemon, no compose, per-container VMs, Rosetta, anonymous-volume cleanup) that bite during a transition.
+description: Use when running, building, or managing Linux containers with Apple's `container` CLI on macOS (Apple silicon), or when migrating a Docker / Docker Desktop workflow to Apple Container. Triggers include "apple container", "the container CLI", "container run/build", "replace Docker Desktop on mac", "docker to apple container", or running containers on Apple silicon without Docker. Covers setup, the Docker→container command mapping, and the behavioral differences (launchd-managed services, no built-in Compose, per-container VMs, Rosetta, anonymous-volume cleanup) that bite during a transition.
 ---
 
 # Apple container
@@ -20,10 +20,13 @@ For exhaustive command flags and the full Docker→container mapping, see
 - **One lightweight VM per container** (via the [Containerization](https://github.com/apple/containerization)
   package + Virtualization.framework), not one shared Linux VM hosting all containers like Docker
   Desktop. Better isolation/privacy; only the data you mount enters each VM.
-- **No long-running daemon you manage like `dockerd`.** Instead a launchd-managed `container-apiserver`
-  that you bring up once with `container system start`.
-- **Requires macOS 26 (Tahoe) and Apple silicon.** It *runs* on macOS 15 but with networking limitations
-  (no `container network`, containers can't talk to each other): see references.
+- **A long-running launchd-managed API service and helpers.** `container system start` launches
+  `container-apiserver`; `container system stop` terminates it. The CLI communicates with that API
+  and XPC helpers for images, networking and container runtimes. This is not a daemon-free runtime.
+  See the [1.4.1 technical overview](https://github.com/apple/container/blob/1.4.1/docs/technical-overview.md).
+- **Supported on macOS 26 and Apple silicon.** Older macOS versions are unsupported.
+  Historical macOS 15 behavior has networking limitations; it is not a supported deployment target.
+  See the [1.4.1 requirements](https://github.com/apple/container/blob/1.4.1/README.md#requirements).
 
 ## Setup (do this first)
 
@@ -59,8 +62,9 @@ container image push registry.example.com/me/app:1.0
 container stop web ; container rm web             # stop then remove
 ```
 
-> No single `docker system prune`: clean up per-resource with `container prune`,
-> `container image prune`, and `container volume prune`.
+> Cleanup is version-dependent: 1.4.1 adds `container clean`. Inspect `container clean --help`
+> and resource-specific prune help before use. Review exact targets and durable data first;
+> the existence of a cleanup command is not authorization for blanket deletion.
 
 `container run`/`create` accept the Docker-style flags you expect: `-e/--env`, `--env-file`,
 `-v/--volume`, `--mount`, `-w/--workdir`, `-u/--user`, `-p/--publish`, `--rm`, `--cap-add/--cap-drop`,
@@ -105,7 +109,7 @@ container run -d -p 8080:80 nginx
 container volume create data && container run -v data:/var/lib/app my-app
 
 # Resource limits
-container run --cpus 2 --memory 1G node:18
+container run --cpus 2 --memory 1G alpine:3.23 true
 
 # Multi-platform build + run the amd64 variant under Rosetta
 container build --arch arm64 --arch amd64 -t me/app:latest .
@@ -113,7 +117,7 @@ container run --arch amd64 --rm me/app:latest uname -a   # → x86_64
 
 # Disk usage / cleanup
 container system df
-container prune ; container image prune ; container volume prune
+container clean --help                         # inspect scope before any deletion
 ```
 
 Shell completions for zsh/bash/fish are documented in the upstream `how-to.md`
@@ -129,8 +133,11 @@ Shell completions for zsh/bash/fish are documented in the upstream `how-to.md`
 - **Upstream docs:** <https://github.com/apple/container/tree/main/docs>: `command-reference.md`,
   `how-to.md`, `technical-overview.md`, tutorials. API reference (Swift, for embedding):
   <https://apple.github.io/container/documentation/>
-- *Local to Matt's environment:* the full source docs are also harvested into the Claude Context
-  Library at `contexts/technical/apple-container/` (the doc-navigator surfaces them on request).
+> Reviewed against [Apple Container 1.4.1](https://github.com/apple/container/releases/tag/1.4.1)
+> on 2026-09-10. It is a 1.x release, not pre-1.0. Some upstream README prose still contains
+> old pre-1.0 wording; use the installed version, release notes and tag-matched documentation
+> for compatibility decisions. 1.4.1 includes security fixes and changes the `system status`
+> output contract. Pin releases and verify parsers/workloads after upgrades.
 
-> Project status: pre-1.0, active development. Stability guaranteed only within patch versions; minor
-> releases may include breaking changes. Pin to a release tag for reproducibility.
+> Inspection output can include environment variables. Select only required identity, image,
+> mount, state and resource fields; never print a full environment or credential-bearing inspect result.

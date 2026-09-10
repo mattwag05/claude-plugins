@@ -76,7 +76,7 @@ For deep prose, the full source docs are in the CCL at `contexts/technical/apple
 
 ## Behavioral differences that bite (complete list)
 
-1. **No daemon to manage; no `docker compose`.** (Biggest migration gaps.)
+1. **Launchd-managed API services; no built-in `docker compose`.** Start/stop the API service with `container system start` / `container system stop`; inspect actual service state when debugging.
 2. **Anonymous volumes** (`-v /path` or `--mount type=volume,dst=/path` with no source) get UUID names
    (`anon-…`) and are **not** removed by `--rm`: clean up manually.
 3. **Rosetta** translates x86_64 (`--arch amd64` / `--rosetta`); the builder VM uses Rosetta by default
@@ -102,5 +102,5 @@ container system start                       # bring services up (installs defau
 container system stop                        # always stop before upgrade/downgrade
 ```
 
-Requirements: **Apple silicon + macOS 26** (runs on 15 with the limits above). Pre-1.0: pin to a
+Requirements: **Apple silicon + macOS 26**; older macOS versions are unsupported. Reviewed against 1.4.1: pin to a
 release tag; minor versions may break.

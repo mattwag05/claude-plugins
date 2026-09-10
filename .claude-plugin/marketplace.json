@@ -13,7 +13,7 @@
       "name": "apple-container",
       "source": "./client-adapters/claude-code/plugins/apple-container",
       "description": "Run Linux containers with Apple's container CLI and migrate Docker workflows to Apple Container.",
-      "version": "0.3.0"
+      "version": "0.3.1"
     },
     {
       "name": "autonomous-execution",
